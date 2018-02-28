@@ -15,7 +15,7 @@ class console_logger
     console_logger();
     ~console_logger() override = default;
 
-    void update(const cmd_pipeline_t &cmd) override;
+    void update(const cmd_block_t &cmd) override;
     void run() override;
     void stop() override;
 
@@ -25,7 +25,9 @@ class console_logger
   private:
     std::condition_variable m_cv;
     std::mutex m_cv_mutex;
-    std::queue<std::string> m_queue;
+    std::queue<cmd_block_t> m_queue;
     std::atomic<bool> m_is_run;
     std::thread m_worker;
+
+    std::string m_thread_name = "log";
 };

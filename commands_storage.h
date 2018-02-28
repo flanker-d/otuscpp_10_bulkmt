@@ -14,5 +14,5 @@ struct commands_storage_t
   void clear();
   void init_time();
   void append(const std::string &cmd);
-  cmd_pipeline_t make_pipeline();
+  cmd_block_t make_block();
 };

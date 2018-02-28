@@ -26,20 +26,22 @@ void commands_storage_t::append(const std::string &cmd)
   commands.push_back(cmd);
 }
 
-cmd_pipeline_t commands_storage_t::make_pipeline()
+cmd_block_t commands_storage_t::make_block()
 {
-  cmd_pipeline_t pipeline;
-  pipeline.time = time;
+  cmd_block_t cmd_block;
+  cmd_block.time = time;
+  cmd_block.count = commands.size();
+
   for (const auto &cmd : commands)
   {
-    if (pipeline.cmd_pipeline.empty())
+    if (cmd_block.block.empty())
     {
-      pipeline.cmd_pipeline.append(cmd);
+      cmd_block.block.append(cmd);
     }
     else
     {
-      pipeline.cmd_pipeline.append(", " + cmd);
+      cmd_block.block.append(", " + cmd);
     }
   }
-  return pipeline;
+  return cmd_block;
 }

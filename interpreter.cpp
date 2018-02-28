@@ -5,6 +5,7 @@ using namespace std::chrono_literals;
 interpreter::interpreter(int block_size)
   : m_block_size(block_size)
 {
+  metricks::instance().register_thread(m_thread_name);
   subscribe(std::make_shared<console_logger>());
   subscribe(std::make_shared<file_logger>(file_loggers_count));
 }
@@ -17,23 +18,25 @@ void interpreter::run()
   while (std::getline(std::cin, command))
   //for(int i = 0; i < 3; i++)
   {
+    metricks::instance().lines_incr(m_thread_name);
     process_cmd(command);
   }
 
   //std::this_thread::sleep_for(1s);
 
   stop_observers();
+  metricks::instance().print_metrics();
 }
 
 void interpreter::process_cmd(const std::string &cmd)
 {
   if (cmd == "{")
   {
-    process_open_brace();
+    process_open_bracket();
   }
   else if (cmd == "}")
   {
-    process_close_brace();
+    process_close_bracket();
   }
   else
   {
@@ -46,20 +49,20 @@ void interpreter::subscribe(std::shared_ptr<observer>&& obs)
   m_subs.emplace_back(std::move(obs));
 }
 
-void interpreter::process_open_brace()
+void interpreter::process_open_bracket()
 {
-  m_open_braces_count++;
-  if (m_open_braces_count == 1)
+  m_open_brackets_count++;
+  if (m_open_brackets_count == 1)
   {
     notify();
     m_commands_storage.init_time();
   }
 }
 
-void interpreter::process_close_brace()
+void interpreter::process_close_bracket()
 {
-  m_open_braces_count--;
-  if (m_open_braces_count == 0)
+  m_open_brackets_count--;
+  if (m_open_brackets_count == 0)
   {
     notify();
   }
@@ -73,7 +76,7 @@ void interpreter::process_simple_cmd(const std::string &cmd)
   }
 
   m_commands_storage.append(cmd);
-  if ((m_open_braces_count == 0) && (m_commands_storage.commands_count() == m_block_size))
+  if ((m_open_brackets_count == 0) && (m_commands_storage.commands_count() == m_block_size))
   {
     notify();
   }
@@ -95,11 +98,13 @@ void interpreter::notify()
 {
   if (!m_commands_storage.is_empty())
   {
-    cmd_pipeline_t cmd = m_commands_storage.make_pipeline();
+    cmd_block_t cmd = m_commands_storage.make_block();
     for (auto &s : m_subs)
     {
       s->update(cmd);
     }
+    metricks::instance().blocks_incr(m_thread_name);
+    metricks::instance().commands_incr(m_thread_name, cmd.count);
     m_commands_storage.clear();
   }
 }

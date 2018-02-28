@@ -1,4 +1,5 @@
 #include <file_logger.h>
+#include <metricks.h>
 #include <fstream>
 #include <sstream>
 
@@ -8,7 +9,7 @@ file_logger::file_logger(int workers_count)
 {
 }
 
-void file_logger::update(const cmd_pipeline_t &cmd)
+void file_logger::update(const cmd_block_t &cmd)
 {
   std::unique_lock<std::mutex> lk(m_cv_mutex);
   m_queue.push(cmd);
@@ -18,7 +19,11 @@ void file_logger::update(const cmd_pipeline_t &cmd)
 void file_logger::run()
 {
   for(int i = 0; i < m_workers_count; i++)
-    m_workers.emplace_back(std::thread(&file_logger::worker, this));
+  {
+    std::string thread_name = "file" + std::to_string(i+1);
+    metricks::instance().register_thread(thread_name);
+    m_workers.emplace_back(std::thread(&file_logger::worker, this, thread_name));
+  }
 }
 
 void file_logger::stop()
@@ -29,7 +34,7 @@ void file_logger::stop()
     wrkr.join();
 }
 
-void file_logger::worker()
+void file_logger::worker(const std::string& thread_name)
 {
   while(m_is_run)
   {
@@ -41,6 +46,9 @@ void file_logger::worker()
     lk.unlock();
 
     write_to_file(cmd_pipeline);
+
+    metricks::instance().blocks_incr(thread_name);
+    metricks::instance().commands_incr(thread_name, cmd_pipeline.count);
   }
 }
 
@@ -51,10 +59,10 @@ std::string file_logger::get_new_filename(const time_t &time)
   return "bulk" + std::to_string(time) + "_" + ss.str() + ".log";
 }
 
-void file_logger::write_to_file(const cmd_pipeline_t &cmd_pipeline)
+void file_logger::write_to_file(const cmd_block_t &cmd_block)
 {
-  std::ofstream output_file(get_new_filename(cmd_pipeline.time));
-  output_file << cmd_pipeline.cmd_pipeline << std::endl;
+  std::ofstream output_file(get_new_filename(cmd_block.time));
+  output_file << cmd_block.block << std::endl;
   output_file.flush();
   output_file.close();
 }
