@@ -1,16 +1,11 @@
-#include <interpreter/interpreter.h>
-#include <bulk.h>
-#include <file_logger.h>
-#include <console_logger.h>
+#include <interpreter.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-  if(argc == 2)
+  if (argc == 2)
   {
-    int block_size = std::stoi(argv[1]);
-
-    std::shared_ptr<bulk> bulk_ptr = std::make_shared<bulk>(block_size);
-    bulk_ptr->run();
+    std::unique_ptr<interpreter> ipr = std::make_unique<interpreter>(std::stoi(argv[1]));
+    ipr->run();
   }
 
   return 0;

@@ -6,19 +6,7 @@ include_directories (${PROJECT_SOURCE_DIR})
 
 configure_file(version.h.in version.h)
 
-add_executable(bulkmt
-    bulk.cpp
-    console_logger.cpp
-    file_logger.cpp
-    utils.cpp
-    main.cpp
-    interpreter/interpreter.cpp
-    interpreter/cmd_handler.cpp
-    interpreter/braces_handler.cpp
-    interpreter/simple_cmd_handler.cpp
-    observer/observer.cpp
-    observer/subject.cpp)
-target_link_libraries(bulkmt -lpthread)
+add_executable(bulkmt main.cpp console_logger.cpp file_logger.cpp interpreter.cpp observer.h commands_storage.cpp)
 
 set_target_properties(bulkmt PROPERTIES
   CXX_STANDARD 14

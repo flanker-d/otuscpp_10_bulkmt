@@ -1,20 +1,15 @@
 #include <file_logger.h>
-#include <iostream>
+#include <fstream>
 
-void file_logger::update_commands_observer(const std::string& cmd)
+void file_logger::update(const cmd_pipeline_t &cmd)
 {
-  std::ofstream m_output_file(get_new_filename());
-  m_output_file << cmd << std::endl;
-  m_output_file.flush();
-  m_output_file.close();
+  std::ofstream output_file(get_new_filename(cmd.time));
+  output_file << cmd.cmd_pipeline << std::endl;
+  output_file.flush();
+  output_file.close();
 }
 
-void file_logger::update_time_observer(const time_t& time)
+std::string file_logger::get_new_filename(const time_t &time)
 {
-  m_time = time;
-}
-
-std::string file_logger::get_new_filename()
-{
-  return "bulk" + std::to_string(m_time) + ".log";
+  return "bulk" + std::to_string(time) + ".log";
 }

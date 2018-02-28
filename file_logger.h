@@ -1,19 +1,13 @@
-#pragma once 
+#pragma once
 
-#include <observer/observer.h>
-#include <fstream>
+#include <observer.h>
 
 class file_logger
-    : public commands_observer
-    , public time_observer
+  : public observer
 {
   public:
-    void update_commands_observer(const std::string& cmd) override;
-    void update_time_observer(const std::time_t& time) override;
+    void update(const cmd_pipeline_t &cmd) override;
 
   private:
-    std::string get_new_filename();
-
-  private:
-    time_t m_time;
+    std::string get_new_filename(const time_t &time);
 };
