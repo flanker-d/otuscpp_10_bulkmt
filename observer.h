@@ -13,4 +13,7 @@ class observer
 {
   public:
     virtual void update(const cmd_pipeline_t &cmd) = 0;
+    virtual void run() = 0;
+    virtual void stop() = 0;
+    virtual ~observer() = default;
 };

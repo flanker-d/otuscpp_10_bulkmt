@@ -2,20 +2,23 @@
 
 interpreter::interpreter(int block_size)
   : m_block_size(block_size)
-  , m_console_logger(std::make_shared<console_logger>())
-  , m_file_logger(std::make_shared<file_logger>())
 {
-  subscribe(m_console_logger);
-  subscribe(m_file_logger);
+  subscribe(std::make_shared<console_logger>());
+  subscribe(std::make_shared<file_logger>());
 }
 
 void interpreter::run()
 {
-  std::string command;
+  run_observers();
+
+  std::string command;// = "123";
   while (std::getline(std::cin, command))
+  //for(int i = 0; i < 3; i++)
   {
     process_cmd(command);
   }
+
+  stop_observers();
 }
 
 void interpreter::process_cmd(const std::string &cmd)
@@ -34,9 +37,9 @@ void interpreter::process_cmd(const std::string &cmd)
   }
 }
 
-void interpreter::subscribe(std::shared_ptr<observer> obs)
+void interpreter::subscribe(std::shared_ptr<observer>&& obs)
 {
-  m_subs.push_back(obs);
+  m_subs.emplace_back(std::move(obs));
 }
 
 void interpreter::process_open_brace()
@@ -70,6 +73,18 @@ void interpreter::process_simple_cmd(const std::string &cmd)
   {
     notify();
   }
+}
+
+void interpreter::run_observers()
+{
+  for(auto& obs : m_subs)
+    obs->run();
+}
+
+void interpreter::stop_observers()
+{
+  for(auto& obs : m_subs)
+    obs->stop();
 }
 
 void interpreter::notify()

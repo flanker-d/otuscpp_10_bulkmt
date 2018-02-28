@@ -14,6 +14,8 @@ set_target_properties(bulkmt PROPERTIES
   COMPILE_OPTIONS -Wpedantic -Wall -Wextra
 )
 
+target_link_libraries(bulkmt -pthread)
+
 install(TARGETS bulkmt
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
