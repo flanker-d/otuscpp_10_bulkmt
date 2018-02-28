@@ -1,10 +1,12 @@
 #include <interpreter.h>
 
+using namespace std::chrono_literals;
+
 interpreter::interpreter(int block_size)
   : m_block_size(block_size)
 {
   subscribe(std::make_shared<console_logger>());
-  subscribe(std::make_shared<file_logger>());
+  subscribe(std::make_shared<file_logger>(file_loggers_count));
 }
 
 void interpreter::run()
@@ -17,6 +19,8 @@ void interpreter::run()
   {
     process_cmd(command);
   }
+
+  //std::this_thread::sleep_for(1s);
 
   stop_observers();
 }
