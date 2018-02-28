@@ -14,5 +14,5 @@ struct commands_storage_t
   void clear();
   void init_time();
   void append(const std::string &cmd);
-  cmd_block_t make_block();
+  cmd_block_t make_block(int seq_num);
 };

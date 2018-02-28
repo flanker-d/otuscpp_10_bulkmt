@@ -23,6 +23,12 @@ class metricks
   public:
     static metricks& instance();
     void register_thread(const std::string& thread_id);
+    const int get_lines_count(const std::string &thread_id) const
+    {
+      auto thr_metr = m_metricks.find(thread_id);
+      if(thr_metr != m_metricks.end())
+        return *(thr_metr->second.lines.get());
+    }
     void lines_incr(const std::string &thread_id);
     void blocks_incr(const std::string &thread_id);
     void commands_incr(const std::string &thread_id, int commands);

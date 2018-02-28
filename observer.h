@@ -8,6 +8,7 @@ struct cmd_block_t
   time_t time;
   std::string block;
   int count;
+  int block_seq_number;
 };
 
 class observer

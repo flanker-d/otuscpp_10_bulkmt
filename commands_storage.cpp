@@ -26,11 +26,12 @@ void commands_storage_t::append(const std::string &cmd)
   commands.push_back(cmd);
 }
 
-cmd_block_t commands_storage_t::make_block()
+cmd_block_t commands_storage_t::make_block(int seq_num)
 {
   cmd_block_t cmd_block;
   cmd_block.time = time;
   cmd_block.count = commands.size();
+  cmd_block.block_seq_number = seq_num;
 
   for (const auto &cmd : commands)
   {
