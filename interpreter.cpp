@@ -110,7 +110,7 @@ void interpreter::notify()
 {
   if (!m_commands_storage.is_empty())
   {
-    cmd_block_t cmd = m_commands_storage.make_block(metricks::instance().get_lines_count(m_thread_name));
+    cmd_block_t cmd = m_commands_storage.make_block(metricks::instance().get_blocks_count(m_thread_name));
     for (auto &s : m_subs)
     {
       s->update(cmd);

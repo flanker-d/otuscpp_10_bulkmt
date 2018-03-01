@@ -70,7 +70,9 @@ void file_logger::sha256_calc(const std::string &cmd)
 
 std::string file_logger::get_new_filename(const time_t &time, const std::string &thread_name, int seq_num)
 {
-  return "bulk" + std::to_string(time) + "_" + thread_name + "_" + std::to_string(seq_num) + ".log";
+  std::stringstream ss;
+  ss << std::hex << std::this_thread::get_id();
+  return "bulk" + std::to_string(time) + "_" + thread_name + "_" + std::to_string(seq_num) + "_" + ss.str() + ".log";
 }
 
 void file_logger::write_to_file(const cmd_block_t &cmd_block, const std::string &thread_name)

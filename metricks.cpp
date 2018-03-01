@@ -13,11 +13,25 @@ void metricks::register_thread(const std::string &thread_id)
   m_metricks.emplace(std::move(std::make_pair(thread_id, std::move(metr))));
 }
 
+const int metricks::get_lines_count(const std::string& thread_id) const
+{
+  auto thr_metr = m_metricks.find(thread_id);
+  if(thr_metr != m_metricks.end())
+    return *(thr_metr->second.lines.get());
+}
+
 void metricks::lines_incr(const std::string &thread_id)
 {
   auto thr_metr = m_metricks.find(thread_id);
   if(thr_metr != m_metricks.end())
     *(thr_metr->second.lines.get()) += 1;
+}
+
+const int metricks::get_blocks_count(const std::string& thread_id) const
+{
+  auto thr_metr = m_metricks.find(thread_id);
+  if(thr_metr != m_metricks.end())
+    return *(thr_metr->second.blocks.get());
 }
 
 void metricks::blocks_incr(const std::string &thread_id)
