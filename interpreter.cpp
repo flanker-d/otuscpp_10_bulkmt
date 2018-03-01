@@ -56,6 +56,18 @@ void interpreter::process_cmd(const std::string &cmd)
   }
 }
 
+void interpreter::run_observers()
+{
+  for(auto& obs : m_subs)
+    obs->run();
+}
+
+void interpreter::stop_observers()
+{
+  for(auto& obs : m_subs)
+    obs->stop();
+}
+
 void interpreter::subscribe(std::shared_ptr<observer>&& obs)
 {
   m_subs.emplace_back(std::move(obs));
@@ -92,18 +104,6 @@ void interpreter::process_simple_cmd(const std::string &cmd)
   {
     notify();
   }
-}
-
-void interpreter::run_observers()
-{
-  for(auto& obs : m_subs)
-    obs->run();
-}
-
-void interpreter::stop_observers()
-{
-  for(auto& obs : m_subs)
-    obs->stop();
 }
 
 void interpreter::notify()

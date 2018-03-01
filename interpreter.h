@@ -16,14 +16,14 @@ class interpreter
     interpreter(int block_size);
     void run();
     void process_cmd(const std::string &cmd);
+    void run_observers();
+    void stop_observers();
 
   private:
     void subscribe(std::shared_ptr<observer>&& obs);
     void process_open_bracket();
     void process_close_bracket();
     void process_simple_cmd(const std::string &cmd);
-    void run_observers();
-    void stop_observers();
     void notify();
 
   private:
