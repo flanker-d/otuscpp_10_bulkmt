@@ -18,11 +18,13 @@ BulkMT
 - при помощи команды `./stress_test.sh | ./bulk
 mt 3` запускается скрипт:
  
-`#!/bin/bash`
-`for (( i=1; i <= 99999; i++ ))`
-`do`
-`echo "cmd$i"`
-`done`
+```bash
+#!/bin/bash
+for (( i=1; i <= 99999; i++ ))
+do
+echo "cmd$i"
+done
+```c++
 
 Далее начинает выполняться поток программы, в основном цикле которого реализована следующая последовательность действий: 
 
@@ -35,47 +37,53 @@ mt 3` запускается скрипт:
 
 В прогграммном коде измерения выглядят так:
 
-`void interpreter::run()`
-`{`
-`  run_observers();`
+```c++
+void interpreter::run()
+{
+  run_observers();
 
-`#ifdef METRICS_EXTENDED`
-`  auto ms_start = metricks::instance().get_time_now();`
-`#endif`
+#ifdef METRICS_EXTENDED
+  auto ms_start = metricks::instance().get_time_now();
+#endif
 
-`  std::string command;`
-`  while (std::getline(std::cin, command))`
-`  {`
-`    metricks::instance().lines_incr(m_thread_name);`
-`    process_cmd(command);`
-`  }`
+  std::string command;
+  while (std::getline(std::cin, command))
+  {
+    metricks::instance().lines_incr(m_thread_name);
+    process_cmd(command);
+  }
 
-`  stop_observers();`
+  stop_observers();
 
-`#ifdef METRICS_EXTENDED`
-`  auto res_time = metricks::instance().get_diff_time_now(ms_start);`
-`#endif`
+#ifdef METRICS_EXTENDED
+  auto res_time = metricks::instance().get_diff_time_now(ms_start);
+#endif
 
-`  metricks::instance().print_metrics();`
+  metricks::instance().print_metrics();
 
-`#ifdef METRICS_EXTENDED`
-`  metricks::instance().print_time(res_time);`
-`#endif`
-`}`
+#ifdef METRICS_EXTENDED
+  metricks::instance().print_time(res_time);
+#endif
+}
+```
 
 *Операции при записи в файл:*
 Перед записью в файл, поток выполняет вычисление sha256.
-`#ifdef METRICS_EXTENDED`
-`    sha256_calc(cmd_pipeline.block);`
-`#endif`
-`    write_to_file(cmd_pipeline, thread_name);`
+```c++
+#ifdef METRICS_EXTENDED
+    sha256_calc(cmd_pipeline.block);
+#endif
+    write_to_file(cmd_pipeline, thread_name);
+```
 
 Для загрузки ядер CPU на 90-100% вычисление sha256 повторяется 100 раз.
-`void file_logger::sha256_calc(const std::string &cmd)`
-`{`
-`  for(int i = 0; i < 100; i++)`
-`    picosha2::hash256_hex_string(cmd);`
-`}`
+```c++
+void file_logger::sha256_calc(const std::string &cmd)
+{
+  for(int i = 0; i < 100; i++)
+    picosha2::hash256_hex_string(cmd);
+}
+```
 
 *Результаты тестирования:*
 ![table](https://github.com/flanker-d/otuscpp_10_bulkmt/blob/pics/pics/table.jpg)
