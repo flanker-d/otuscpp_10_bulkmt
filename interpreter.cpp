@@ -2,6 +2,7 @@
 
 using namespace std::chrono_literals;
 
+
 interpreter::interpreter(int block_size)
   : m_block_size(block_size)
 {
@@ -14,6 +15,10 @@ void interpreter::run()
 {
   run_observers();
 
+#ifdef METRICS_EXTENDED
+  auto ms_start = metricks::instance().get_time_now();
+#endif
+
   std::string command;// = "123";
   while (std::getline(std::cin, command))
   //for(int i = 0; i < 3; i++)
@@ -22,10 +27,17 @@ void interpreter::run()
     process_cmd(command);
   }
 
-  //std::this_thread::sleep_for(1s);
-
   stop_observers();
+
+#ifdef METRICS_EXTENDED
+  auto res_time = metricks::instance().get_diff_time_now(ms_start);
+#endif
+
   metricks::instance().print_metrics();
+
+#ifdef METRICS_EXTENDED
+  metricks::instance().print_time(res_time);
+#endif
 }
 
 void interpreter::process_cmd(const std::string &cmd)

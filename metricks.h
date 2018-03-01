@@ -5,6 +5,10 @@
 #include <map>
 #include <iostream>
 
+//#define METRICS_EXTENDED
+
+using namespace std::chrono;
+
 struct thread_metricks
 {
   std::string thread_id;
@@ -33,6 +37,11 @@ class metricks
     void blocks_incr(const std::string &thread_id);
     void commands_incr(const std::string &thread_id, int commands);
     void print_metrics();
+
+    milliseconds get_time_now();
+    milliseconds get_diff_time_now(const milliseconds& start);
+    void print_time(const milliseconds& time);
+
   private:
     metricks() = default;
     metricks(const metricks& root) = delete;

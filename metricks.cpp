@@ -36,15 +36,19 @@ void metricks::commands_incr(const std::string &thread_id, int commands)
 
 void metricks::print_metrics()
 {
-//  int total_blocks = 0;
-//  int total_commands = 0;
+#ifdef METRICS_EXTENDED
+  int total_blocks = 0;
+  int total_commands = 0;
+#endif
   for(auto& metr : m_metricks)
   {
-//    if((metr.first != "main") && (metr.first != "log"))
-//    {
-//      total_blocks += *(metr.second.blocks);
-//      total_commands += *(metr.second.commands);
-//    }
+#ifdef METRICS_EXTENDED
+    if((metr.first != "main") && (metr.first != "log"))
+    {
+      total_blocks += *(metr.second.blocks);
+      total_commands += *(metr.second.commands);
+    }
+#endif
 
     if(metr.first == "main")
       std::cout << metr.first
@@ -58,6 +62,23 @@ void metricks::print_metrics()
                 << ", commands: " << *(metr.second.commands)
                 << std::endl;
   }
+#ifdef METRICS_EXTENDED
+  std::cout << "total_blocks_in_files: " << total_blocks << ", total_commands_in_files: " << total_commands << std::endl;
+#endif
+}
 
-  //std::cout << "total_blocks_in_files: " << total_blocks << ", total_commands_in_files: " << total_commands << std::endl;
+milliseconds metricks::get_time_now()
+{
+  return duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+}
+
+milliseconds metricks::get_diff_time_now(const milliseconds &start)
+{
+  auto finish = metricks::get_time_now();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(finish - start);
+}
+
+void metricks::print_time(const milliseconds &time)
+{
+  std::cout << "time: " << time.count() << " ms" << std::endl;
 }

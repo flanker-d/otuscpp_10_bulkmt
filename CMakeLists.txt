@@ -13,7 +13,8 @@ add_executable(bulkmt
         interpreter.cpp
         observer.h
         commands_storage.cpp
-        metricks.cpp)
+        metricks.cpp
+        third_party/picosha2/picosha2.h)
 
 set_target_properties(bulkmt PROPERTIES
   CXX_STANDARD 14

@@ -2,6 +2,7 @@
 #include <metricks.h>
 #include <fstream>
 #include <sstream>
+#include <third_party/picosha2/picosha2.h>
 
 file_logger::file_logger(int workers_count)
   : m_is_run(true)
@@ -51,12 +52,20 @@ void file_logger::worker(const std::string& thread_name)
     auto cmd_pipeline = m_queue.front();
     m_queue.pop();
     lk.unlock();
-
+#ifdef METRICS_EXTENDED
+    sha256_calc(cmd_pipeline.block);
+#endif
     write_to_file(cmd_pipeline, thread_name);
 
     metricks::instance().blocks_incr(thread_name);
     metricks::instance().commands_incr(thread_name, cmd_pipeline.count);
   }
+}
+
+void file_logger::sha256_calc(const std::string &cmd)
+{
+  for(int i = 0; i < 20; i++)
+    picosha2::hash256_hex_string(cmd);
 }
 
 std::string file_logger::get_new_filename(const time_t &time, const std::string &thread_name, int seq_num)
@@ -71,3 +80,5 @@ void file_logger::write_to_file(const cmd_block_t &cmd_block, const std::string 
   output_file.flush();
   output_file.close();
 }
+
+

@@ -20,6 +20,7 @@ class file_logger
 
   private:
     void worker(const std::string& thread_name);
+    void sha256_calc(const std::string &cmd);
     std::string get_new_filename(const time_t &time, const std::string &thread_name, int seq_num);
     void write_to_file(const cmd_block_t& cmd_block, const std::string &thread_name);
 
