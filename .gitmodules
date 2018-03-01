@@ -1,3 +1,0 @@
-[submodule "third_party/picosha2"]
-	path = third_party/picosha2
-	url = git://github.com/okdshin/PicoSHA2.git
