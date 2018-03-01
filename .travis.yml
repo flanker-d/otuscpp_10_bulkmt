@@ -20,4 +20,6 @@ deploy:
     skip_cleanup: true
     script:
     - curl -T bulkmt-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb -uflanker-d:$BINTRAY_API_KEY "https://api.bintray.com/content/flankerd/otuscpp/10_bulkmt/$TRAVIS_BUILD_NUMBER/bulkmt-0.0.$TRAVIS_BUILD_NUMBER-Linux.deb;deb_distribution=trusty;deb_component=main;deb_architecture=amd64;publish=1"
+    on:
+      branch: master
 
