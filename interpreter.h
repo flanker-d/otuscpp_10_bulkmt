@@ -16,6 +16,7 @@ class interpreter
     interpreter(int block_size);
     void run();
     void process_cmd(const std::string &cmd);
+    void forced_dump();
     void run_observers();
     void stop_observers();
 

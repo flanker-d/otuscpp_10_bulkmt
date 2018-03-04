@@ -26,6 +26,7 @@ void interpreter::run()
     metricks::instance().lines_incr(m_thread_name);
     process_cmd(command);
   }
+  forced_dump();
 
   stop_observers();
 
@@ -53,6 +54,14 @@ void interpreter::process_cmd(const std::string &cmd)
   else
   {
     process_simple_cmd(cmd);
+  }
+}
+
+void interpreter::forced_dump()
+{
+  if (m_open_brackets_count == 0)
+  {
+    notify();
   }
 }
 
